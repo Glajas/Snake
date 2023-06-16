@@ -1,9 +1,11 @@
 package Logic;
 
-import Handlers.EventListener;
-import Handlers.MovementListener;
+import Handlers.LogicListener;
+import Handlers.GraphicsListener;
 
-public class SnakeGame implements Runnable, MovementListener, EventListener {
+public class SnakeGame implements Runnable, GraphicsListener {
+
+    private LogicListener listener;
 
     public enum Directions {
         NORTH,
@@ -12,8 +14,24 @@ public class SnakeGame implements Runnable, MovementListener, EventListener {
         SOUTH
     }
 
+    private Directions direction;
+
+    public SnakeGame(){
+
+    }
+
     @Override
     public void run() {
+
+    }
+
+    @Override
+    public void changeDirection(Directions direction) {
+
+    }
+
+    @Override
+    public void stopGame() {
 
     }
 }
