@@ -4,12 +4,11 @@ import java.util.Map;
 
 public class Board {
 
-    public enum fieldBinaryCode {
+    public enum BoardFieldTypes {
         FOOD,
+        FOOD_COOLDOWN,
         SNAKE_HEAD,
-        SNAKE_BODY,
-        SNAKE_TAIL,
-        // SNAKE_TAIL ma się tworzyć na końcu węża, a poprzedni SNAKE_TAIL ma zamienić się w SNAKE_BODY
+        SNAKE_BODY
     }
 
     private final int[][] board;
