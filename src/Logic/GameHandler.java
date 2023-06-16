@@ -1,6 +1,6 @@
 package Logic;
 
-import Handlers.PromptListener;
+import Listeners.PromptListener;
 
 public class GameHandler implements PromptListener {
     @Override

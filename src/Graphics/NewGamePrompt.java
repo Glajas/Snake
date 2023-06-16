@@ -1,6 +1,6 @@
 package Graphics;
 
-import Handlers.PromptListener;
+import Listeners.PromptListener;
 
 import javax.swing.*;
 

@@ -1,7 +1,7 @@
 package Logic;
 
-import Handlers.LogicListener;
-import Handlers.GraphicsListener;
+import Listeners.LogicListener;
+import Listeners.GraphicsListener;
 
 public class SnakeGame implements Runnable, GraphicsListener {
 

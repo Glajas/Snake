@@ -1,6 +1,6 @@
 package Graphics;
 
-import Handlers.LogicListener;
+import Listeners.LogicListener;
 
 import javax.swing.JFrame;
 import java.awt.event.KeyEvent;
