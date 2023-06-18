@@ -1,8 +1,7 @@
 package Graphics;
 
 import Listeners.*;
-import Logic.GameManager;
-import Logic.SnakeGame;
+
 import Logic.SnakeGame.Directions;
 
 import javax.swing.*;
@@ -102,6 +101,9 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
                     } else {
                         System.out.println("Please enter your name...");
                     }
+
+                    scorePanel.reset();
+
                     playerName = playerNameInput;
                     tick = tickInput;
                 }
@@ -156,8 +158,7 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
 
     @Override
     public void crash(CrashEvent ce) {
-        System.out.println("= KRASZUUUWAA");
-        gameRunning = false;
+        reset();
     }
 
     @Override
@@ -174,6 +175,12 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
 
     public void setGraphicsListener(GraphicsListener graphicsListener){
         this.graphicsListener = graphicsListener;
+    }
+
+    public void reset() {
+        gameRunning = false;
+        currentDirection = null;
+        startGame.setVisible(true);
     }
 
     @Override
@@ -197,7 +204,7 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
                 }
             }
             case KeyEvent.VK_LEFT -> {
-                if(currentDirection != Directions.WEST && currentDirection != Directions.EAST) {
+                if(currentDirection != Directions.WEST && currentDirection != Directions.EAST && currentDirection != null) {
                     graphicsListener.changeDirection(Directions.WEST);
                     currentDirection = Directions.WEST;
                 }

@@ -19,4 +19,8 @@ public class ScorePanel extends JPanel {
         score++;
         textField.setText("Score: " + score);
     }
+
+    public void reset() {
+        textField.setText("Score: 0");
+    }
 }

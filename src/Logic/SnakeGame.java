@@ -1,7 +1,9 @@
 package Logic;
 
-import Graphics.GameFrame;
 import Listeners.*;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class SnakeGame implements Runnable {
 
@@ -15,8 +17,8 @@ public class SnakeGame implements Runnable {
     private int snakeLength;
     private int headX;
     private int headY;
-    private int tailX;
-    private int tailY;
+    private Deque<Integer> bodyX;
+    private Deque<Integer> bodyY;
 
     public enum Directions {
         NORTH,
@@ -38,6 +40,17 @@ public class SnakeGame implements Runnable {
         this.board[5][5] = 1;
         this.headX = 5;
         this.headY = 5;
+        this.bodyX = new ArrayDeque<>();
+        this.bodyY = new ArrayDeque<>();
+
+        bodyX.addFirst(headX - 2);
+        bodyY.addFirst(headY);
+        bodyX.addFirst(headX - 1);
+        bodyY.addFirst(headY);
+
+        board[headY][headX - 2] = 2;
+        board[headY][headX - 1] = 2;
+
         this.board[11][20] = 3;
     }
 
@@ -49,87 +62,96 @@ public class SnakeGame implements Runnable {
             } catch (InterruptedException e) {
                 System.out.println("InterruptedException");
             }
-            if(direction != null)
+            if (direction != null)
                 move();
             gameManager.logicListener.gameTick(new GameTickEvent(this, board));
         }
     }
 
-    public void move(){
+    public void move() {
         int newHeadX = headX;
         int newHeadY = headY;
 
-        switch (direction){
-            case NORTH -> {
+        switch (direction) {
+            case NORTH:
                 newHeadY--;
-            }
-            case WEST -> {
+                break;
+            case WEST:
                 newHeadX--;
-            }
-            case SOUTH -> {
+                break;
+            case SOUTH:
                 newHeadY++;
-            }
-            case EAST -> {
+                break;
+            case EAST:
                 newHeadX++;
-            }
+                break;
         }
 
-        if(isCrash(newHeadX, newHeadY)) {
-            System.out.println("Izka <3");
-            gameManager.logicListener.crash(new CrashEvent(this));
+        if (isCrash(newHeadX, newHeadY)) {
+            gameManager.logicListener.crash(new CrashEvent(this, snakeLength - 3));
+            gameManager.setGameRunning(false);
             running = false;
         } else {
-            if(isFood(newHeadX, newHeadY)){
+            if (isFood(newHeadX, newHeadY)) {
                 snakeLength++;
                 gameManager.logicListener.foodEaten(new FoodEatenEvent(this, snakeLength));
                 generateFood();
+            } else {
+                if (snakeLength > 1) {
+                    board[bodyY.getLast()][bodyX.getLast()] = 0;
+                    bodyX.removeLast();
+                    bodyY.removeLast();
+                }
             }
 
+            bodyX.addFirst(headX);
+            bodyY.addFirst(headY);
             board[headY][headX] = 2;
+
             headX = newHeadX;
             headY = newHeadY;
             board[headY][headX] = 1;
         }
     }
 
-    public boolean isFood(int newHeadX, int newHeadY){
-        if(board[newHeadY][newHeadX] == 3){
+    public boolean isFood(int newHeadX, int newHeadY) {
+        if (board[newHeadY][newHeadX] == 3) {
             return true;
         } else
             return false;
     }
 
-    public boolean isCrash(int newHeadX, int newHeadY){
-        if(newHeadX < 0 || newHeadY >= boardHeight || newHeadY < 0 || newHeadX >= boardWidth){
+    public boolean isCrash(int newHeadX, int newHeadY) {
+        if (newHeadX < 0 || newHeadY >= boardHeight || newHeadY < 0 || newHeadX >= boardWidth) {
             return true;
         } else {
             try {
-                if(board[newHeadY][newHeadX] == 2)
+                if (board[newHeadY][newHeadX] == 2)
                     return true;
-            } catch (ArrayIndexOutOfBoundsException e){
+            } catch (ArrayIndexOutOfBoundsException e) {
                 System.out.println("ArrayIndexOutOfBoundsException");
                 return true;
             }
         }
-            return false;
+        return false;
     }
 
-    public void generateFood(){
+    public void generateFood() {
         boolean viablePosition = false;
-        int randomX = (int)(Math.random()*25);
-        int randomY = (int)(Math.random()*16);
-        while(!viablePosition){
-            if(board[randomY][randomX] == 0){
+        int randomX = (int) (Math.random() * 25);
+        int randomY = (int) (Math.random() * 16);
+        while (!viablePosition) {
+            if (board[randomY][randomX] == 0) {
                 viablePosition = true;
                 board[randomY][randomX] = 3;
             } else {
-                randomX = (int)(Math.random()*25);
-                randomY = (int)(Math.random()*16);
+                randomX = (int) (Math.random() * 25);
+                randomY = (int) (Math.random() * 16);
             }
         }
     }
 
-    public void setDirection(Directions direction){
+    public void setDirection(Directions direction) {
         this.direction = direction;
     }
 }

@@ -34,9 +34,8 @@ public class GameManager implements GraphicsListener {
         game.setDirection(direction);
     }
 
-    @Override
-    public void stopGame() {
-
+    public void setGameRunning(boolean gameRunning) {
+        this.gameRunning = gameRunning;
     }
 
     public void setLogicListener(LogicListener logicListener){

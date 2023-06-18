@@ -34,6 +34,7 @@ public class BoardTable extends JTable {
 
         getCellEditor().stopCellEditing();
     }
+
     static class CustomTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -42,10 +43,10 @@ public class BoardTable extends JTable {
 
             if (value == null) {
                 setBackground(Color.WHITE);
-                setText(""); // Ukryj tekst w komórce
+                setText("");
             } else {
                 setBackground((Color) value);
-                setText(""); // Ukryj tekst w komórce
+                setText("");
             }
 
             return component;
