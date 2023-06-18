@@ -2,8 +2,11 @@ package Logic;
 
 import Listeners.*;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 public class SnakeGame implements Runnable {
 
@@ -153,11 +156,147 @@ public class SnakeGame implements Runnable {
         this.direction = direction;
     }
 
-    public void saveScore(){
+    private void saveScore(){
+        int score = snakeLength - 1;
+        String name = playerName;
+        int nameLength = name.length();
+        String[] result = {String.valueOf(nameLength), name, String.valueOf(score)};
+        ArrayList<String[]> currentScoreboard = scoresAndNamesArrayList();
+        currentScoreboard.add(result);
+        sortScoreArrayList(currentScoreboard);
 
+        if(currentScoreboard.size() > 10)
+            currentScoreboard.remove(currentScoreboard.size());
+
+        try (FileOutputStream output = new FileOutputStream("scores.bin", true)) {
+                for (String[] s : currentScoreboard) {
+                    output.write(s[0].getBytes());
+                    for (char ch : divideStringIntoChars(s[1])) {
+                        output.write(ch);
+                    }
+                    output.write(getByteArray(Integer.parseInt(s[2])));
+                }
+            } catch (IOException e) {
+                System.out.println("Error saving scores (IOException): " + e.getMessage());
+            }
     }
 
-    public void isScoreInHighscore(){
+    private ArrayList<String[]> sortScoreArrayList(ArrayList<String[]> scoresArrayList){
+        Collections.sort(scoresArrayList, (table1, table2) -> {
+            int value1 = Integer.parseInt(table1[2]);
+            int value2 = Integer.parseInt(table2[2]);
+            return value2 - value1;
+        });
 
+//        for(String[] s : scoresArrayList){
+//            for (String x : s){
+//                System.out.println(x);
+//            }
+//            System.out.println();
+//        }
+
+        return scoresArrayList;
+    }
+
+    private byte[] getByteArray(int number){
+        byte[]byteArray = new byte[4];
+        for (int i=0; i<byteArray.length; i++) {
+            byteArray[3 - i] = (byte)(number & 0xFF);
+            number >>= 8;
+        }
+        return byteArray;
+    }
+
+    private int readScore(FileInputStream in) throws IOException {
+        int score = 0;
+        byte[] bytes = new byte[4];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) in.read();
+        }
+        for (byte b : bytes) {
+            score = (score << 8) + (b & 0xFF);
+        }
+        return score;
+    }
+
+    private char[] divideStringIntoChars(String name){
+        char[] chars = new char[name.length()];
+        for(int i = 0; i < name.length(); i++)
+            chars[i] = name.charAt(i);
+        return chars;
+    }
+
+
+    public ArrayList<String[]> scoresAndNamesArrayList(){
+        ArrayList<String[]> scoresList = new ArrayList<>();
+        try (FileInputStream input = new FileInputStream("scores.bin")) {
+            while(input.available() > 0){
+                int nameLength = input.read();
+                String name = "";
+                char nameLetter;
+
+                for(int i = 0; i < nameLength; i++) {
+                    nameLetter = (char) input.read();
+                    name += nameLetter;
+                }
+
+                int score = readScore(input);
+                String[] result = {String.valueOf(nameLength), name, String.valueOf(score)};
+
+                scoresList.add(result);
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading scores (IOException): " + e.getMessage());
+        }
+        return scoresList;
     }
 }
+
+//    private void saveScore(){
+//        int score = snakeLength - 1;
+//        if(isScoreInHighscore(score)){
+//            String name = playerName;
+//            int nameLength = name.length();
+//            try (FileOutputStream output = new FileOutputStream("scores.bin", true)) {
+//                output.write(nameLength);
+//                for(char ch : divideStringIntoChars(name)){
+//                    output.write(ch);
+//                }
+//                output.write(getByteArray(score));
+//            } catch (IOException e) {
+//                System.out.println("Error saving scores (IOException): " + e.getMessage());
+//            }
+//        }
+//        else
+//            System.out.println("Your score is too bad to get into the highscores scoreboard LOL");
+//    }
+//    private boolean isScoreInHighscore(int score){
+//        ArrayList<Integer> scoresList = scoresArrayList();
+//        if(scoresList.size() == 10){
+//            for(Integer i : scoresList){
+//                if(score > i) {
+//                    return true;
+//
+//                }
+//            }
+//            return false;
+//        } else
+//            return true;
+//    }
+
+//    private ArrayList<Integer> scoresArrayList() {
+//        ArrayList<Integer> scoresList = new ArrayList<>();
+//        try (FileInputStream input = new FileInputStream("scores.bin")) {
+//            while(input.available() > 0){
+//                int nameLength = input.read();
+//
+//                for(int i = 0; i < nameLength; i++)
+//                    input.read();
+//
+//                scoresList.add(readScore(input));
+//            }
+//        } catch (IOException e) {
+//            System.out.println("Error loading scores (IOException): " + e.getMessage());
+//        }
+//        return scoresList;
+//    }

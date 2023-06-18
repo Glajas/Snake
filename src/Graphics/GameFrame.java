@@ -221,7 +221,7 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
                 }
             }
             case KeyEvent.VK_LEFT -> {
-                if(currentDirection != Directions.EAST && currentDirection != null && lastDirection != Directions.EAST) {
+                if(currentDirection != Directions.EAST && lastDirection != Directions.EAST) {
                     currentDirection = Directions.WEST;
                 }
             }

@@ -2,7 +2,6 @@ import Graphics.*;
 import Logic.*;
 
 public class SnakeApp {
-
     public static void main(String[] args) {
         GameManager logic = new GameManager();
         GameFrame graphics = new GameFrame();
