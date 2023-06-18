@@ -1,7 +1,5 @@
 package Graphics;
 
-import Listeners.LogicListener;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -19,7 +17,7 @@ public class BoardTable extends JTable {
         setCellSelectionEnabled(false);
 
         setDefaultRenderer(Object.class, new CustomTableCellRenderer());
-        setCellEditor(new NonEditableTableCellEditor());
+        setCellEditor(new CustomCellEditor());
 
         setRowHeight(20);
         for (int i = 0; i < columnCount; i++) {
@@ -42,19 +40,19 @@ public class BoardTable extends JTable {
             Component component = super.getTableCellRendererComponent(table, value, false, false, row, column);
 
             if (value == null) {
-                setBackground(Color.WHITE);
-                setText("");
+                setBackground(Color.GRAY);
+                setText(null);
             } else {
                 setBackground((Color) value);
-                setText("");
+                setText(null);
             }
 
             return component;
         }
     }
 
-    static class NonEditableTableCellEditor extends DefaultCellEditor {
-        public NonEditableTableCellEditor() {
+    static class CustomCellEditor extends DefaultCellEditor {
+        public CustomCellEditor() {
             super(new JTextField());
         }
 

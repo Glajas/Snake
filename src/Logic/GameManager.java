@@ -1,12 +1,9 @@
 package Logic;
 
-import Listeners.ChangeDirectionEvent;
 import Listeners.GraphicsListener;
 import Listeners.LogicListener;
 import Listeners.NewGameEvent;
 import Logic.SnakeGame.Directions;
-
-import java.awt.*;
 
 public class GameManager implements GraphicsListener {
 

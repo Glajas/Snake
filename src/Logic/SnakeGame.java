@@ -36,26 +36,18 @@ public class SnakeGame implements Runnable {
         this.tick = tick;
         this.board = new int[boardHeight][boardWidth];
         this.gameManager = gameManager;
-        this.snakeLength = 3;
+        this.snakeLength = 1;
         this.board[5][5] = 1;
         this.headX = 5;
         this.headY = 5;
         this.bodyX = new ArrayDeque<>();
         this.bodyY = new ArrayDeque<>();
-
-        bodyX.addFirst(headX - 2);
-        bodyY.addFirst(headY);
-        bodyX.addFirst(headX - 1);
-        bodyY.addFirst(headY);
-
-        board[headY][headX - 2] = 2;
-        board[headY][headX - 1] = 2;
-
         this.board[11][20] = 3;
     }
 
     @Override
     public void run() {
+        System.out.println("NEW GAME");
         while (running) {
             try {
                 Thread.sleep(1000/tick);
@@ -64,7 +56,7 @@ public class SnakeGame implements Runnable {
             }
             if (direction != null)
                 move();
-            gameManager.logicListener.gameTick(new GameTickEvent(this, board));
+            gameManager.logicListener.gameTick(new GameTickEvent(this, board, direction));
         }
     }
 
@@ -89,8 +81,10 @@ public class SnakeGame implements Runnable {
 
         if (isCrash(newHeadX, newHeadY)) {
             gameManager.logicListener.crash(new CrashEvent(this, snakeLength - 3));
+            saveScore();
             gameManager.setGameRunning(false);
             running = false;
+            System.out.println("GAME STOPPED");
         } else {
             if (isFood(newHeadX, newHeadY)) {
                 snakeLength++;
@@ -103,10 +97,14 @@ public class SnakeGame implements Runnable {
                     bodyY.removeLast();
                 }
             }
+            if (snakeLength > 1) {
+                bodyX.addFirst(headX);
+                bodyY.addFirst(headY);
+                board[headY][headX] = 2;
+            }
 
-            bodyX.addFirst(headX);
-            bodyY.addFirst(headY);
-            board[headY][headX] = 2;
+            if(snakeLength == 1)
+                board[headY][headX] = 0;
 
             headX = newHeadX;
             headY = newHeadY;
@@ -153,5 +151,13 @@ public class SnakeGame implements Runnable {
 
     public void setDirection(Directions direction) {
         this.direction = direction;
+    }
+
+    public void saveScore(){
+
+    }
+
+    public void isScoreInHighscore(){
+
     }
 }

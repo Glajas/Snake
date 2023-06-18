@@ -18,10 +18,13 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
     private BoardTable boardTable;
     private ScorePanel scorePanel;
     private JButton startGame;
+    private ScoreBoardPanel scoreBoard;
+    public JPanel mainPanel;
     private String playerName;
     private int tick;
     private boolean gameRunning;
     private Directions currentDirection;
+    private Directions lastDirection;
 
     public GameFrame(){
 
@@ -35,7 +38,7 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
         setMaximumSize(new Dimension(500, 380));
         setResizable(false);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel = new JPanel(new BorderLayout());
 
         scorePanel = new ScorePanel();
         mainPanel.add(scorePanel, BorderLayout.WEST);
@@ -43,8 +46,11 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
         boardTable = new BoardTable(16, 25);
         mainPanel.add(boardTable, BorderLayout.SOUTH);
 
+        scoreBoard = new ScoreBoardPanel();
+
         startGame = new JButton("Start");
-        startGame.setPreferredSize(new Dimension(100, 30));
+        startGame.setMinimumSize(new Dimension(100, 30));
+        startGame.setMaximumSize(new Dimension(100, 30));
         startGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -115,6 +121,12 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
                             );
                         }
                 );
+
+                if(scoreBoard.isVisible()) {
+                    scoreBoard.setVisible(false);
+                    mainPanel.remove(scoreBoard);
+                    mainPanel.add(boardTable, BorderLayout.SOUTH);
+                }
             }
         });
 
@@ -153,17 +165,24 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
     }
 
     public void fireNewGame(NewGameEvent evt){
-        this.graphicsListener.newGame(evt);
+        if(this.graphicsListener != null){
+            this.graphicsListener.newGame(evt);
+        } else
+            System.out.println("Couldn't start the game, couldn't find the graphics listener");
     }
 
     @Override
     public void crash(CrashEvent ce) {
         reset();
+        mainPanel.remove(boardTable);
+        mainPanel.add(scoreBoard, BorderLayout.SOUTH);
+        scoreBoard.setVisible(true);
     }
 
     @Override
     public void gameTick(GameTickEvent gte) {
         repaintTable(gte.getBoard());
+        lastDirection = gte.getDirection();
     }
 
     @Override
@@ -192,30 +211,27 @@ public class GameFrame extends JFrame implements LogicListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP -> {
-                if(currentDirection != Directions.NORTH && currentDirection != Directions.SOUTH) {
-                    graphicsListener.changeDirection(Directions.NORTH);
+                if(currentDirection != Directions.SOUTH && lastDirection != Directions.SOUTH) {
                     currentDirection = Directions.NORTH;
                 }
             }
             case KeyEvent.VK_DOWN -> {
-                if(currentDirection != Directions.NORTH && currentDirection != Directions.SOUTH) {
-                    graphicsListener.changeDirection(Directions.SOUTH);
+                if(currentDirection != Directions.NORTH && lastDirection != Directions.NORTH) {
                     currentDirection = Directions.SOUTH;
                 }
             }
             case KeyEvent.VK_LEFT -> {
-                if(currentDirection != Directions.WEST && currentDirection != Directions.EAST && currentDirection != null) {
-                    graphicsListener.changeDirection(Directions.WEST);
+                if(currentDirection != Directions.EAST && currentDirection != null && lastDirection != Directions.EAST) {
                     currentDirection = Directions.WEST;
                 }
             }
             case KeyEvent.VK_RIGHT -> {
-                if(currentDirection != Directions.WEST && currentDirection != Directions.EAST) {
-                    graphicsListener.changeDirection(Directions.EAST);
+                if(currentDirection != Directions.WEST && lastDirection != Directions.WEST) {
                     currentDirection = Directions.EAST;
                 }
             }
         }
+        graphicsListener.changeDirection(currentDirection);
     }
 
     @Override

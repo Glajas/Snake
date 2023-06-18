@@ -5,22 +5,36 @@ import java.awt.*;
 
 public class ScorePanel extends JPanel {
 
-    private JTextField textField;
     private int score;
 
-    public ScorePanel(){
-        this.textField = new JTextField("Score: 0");
-        setLayout(new BorderLayout());
-        this.setMinimumSize(new Dimension(100, 60));
-        this.add(textField);
+    public ScorePanel() {
+        this.score = 0;
+        setPreferredSize(new Dimension(100, 60));
     }
 
-    public void addScore(){
+    public void addScore() {
         score++;
-        textField.setText("Score: " + score);
+        repaint();
     }
 
     public void reset() {
-        textField.setText("Score: 0");
+        score = 0;
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setColor(Color.BLACK);
+
+        String scoreText = "Score: " + score;
+        FontMetrics metrics = g.getFontMetrics();
+        int textWidth = metrics.stringWidth(scoreText);
+        int textHeight = metrics.getHeight();
+        int x = (getWidth() - textWidth) / 2;
+        int y = (getHeight() - textHeight) / 2 + metrics.getAscent();
+        g.drawString(scoreText, x, y);
     }
 }

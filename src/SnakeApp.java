@@ -1,8 +1,6 @@
 import Graphics.*;
 import Logic.*;
 
-import javax.swing.*;
-
 public class SnakeApp {
 
     public static void main(String[] args) {
