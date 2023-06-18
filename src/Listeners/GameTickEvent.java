@@ -3,7 +3,13 @@ package Listeners;
 import java.util.EventObject;
 
 public class GameTickEvent extends EventObject {
-    public GameTickEvent(Object source) {
+    int[][] board;
+    public GameTickEvent(Object source, int[][] board) {
         super(source);
+        this.board = board;
+    }
+
+    public int[][] getBoard(){
+        return this.board;
     }
 }

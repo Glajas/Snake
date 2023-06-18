@@ -1,8 +1,7 @@
 package Listeners;
 
 public interface LogicListener {
-    void gameOver();
-    void gameTickEvent(int[][] board);
-    void updateScore();
-    void gameWon();
+    void crash(CrashEvent ce);
+    void gameTick(GameTickEvent gte);
+    void foodEaten(FoodEatenEvent fee);
 }
